@@ -1,24 +1,20 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using PharmacyClassLib.Repository;
 using PharmacyClassLib.Service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using PharmacyClassLib.Model;
-using PharmacyClassLib.Repository.RegistratedHospitalRepository;
 using PharmacyClassLib;
 using Microsoft.EntityFrameworkCore;
 using PharmacyClassLib.Repository.MedicationIngredientRepository;
 using PharmacyClassLib.Repository.MedicationIngredientsRepository;
+using PharmacyClassLib.Repository.RegistratedHospitalRepository;
 using PharmacyClassLib.Repository.ObjectionRepository;
+using PharmacyClassLib.Repository.IngredientMedicationRepository;
 using PharmacyClassLib.Repository.ResponseRepository;
+using PharmacyClassLib.Repository.InventoryLogRepository;
+using PharmacyClassLib.Service.Interface;
 
 namespace WebApplication1
 {
@@ -37,19 +33,24 @@ namespace WebApplication1
             services.AddControllers();
 
             services.AddDbContext<MyDbContext>(options => options.UseNpgsql(x => x.MigrationsAssembly("PharmacyAPI")));
+
             services.AddTransient<IPharmacyRepository, PharmacyRepository>();
             services.AddTransient<IMedicationIngredientRepository, MedicationIngredientRepository>();
             services.AddTransient<IMedicationRepository, MedicationRepository>();
-            services.AddTransient<IRegistratedHospitalRepository, RegistratedHospitalRepository>();
+            services.AddTransient<IRegisteredHospitalRepository, RegisteredHospitalRepository>();
             services.AddTransient<IObjectionRepository, ObjectionRepository>();
             services.AddTransient<IResponseRepository, ResponseRepository>();
+            services.AddTransient<IIngredientsInMedicationRepository, IngredientsInMedicationRepository>();
+            services.AddTransient<IInventoryLogRepository, InventoryLogRepository>();
+
+            services.AddScoped<IIngredientInMedicationService, IngredientInMedicationService>();
             services.AddScoped<IMedicationService, MedicationService>();
             services.AddScoped<IPharmacyService, PharmacyService>();
             services.AddScoped<IHospitalRegistrationService, HospitalRegistrationService>();
             services.AddScoped<IMedicationIngredientService, MedicationIngredientService>();
-
+            services.AddScoped<IInventoryLogService, InventoryLogService>();       
             services.AddScoped<ObjectionService>();
-            services.AddScoped<ResponseService>();
+            services.AddScoped<ResponseService>(); 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

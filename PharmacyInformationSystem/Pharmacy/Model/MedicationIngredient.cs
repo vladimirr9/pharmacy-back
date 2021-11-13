@@ -14,15 +14,10 @@ namespace PharmacyClassLib.Model
 
         public string Name { get; set; }
 
-        public MedicationIngredient()
+        public MedicationIngredient(long id, string name)
         {
-
-        }
-
-        public MedicationIngredient(long Id,String Name)
-        {
-            this.Id = Id;
-            this.Name = Name;
+            Id = id;
+            Name = name;
         }
     }
 }

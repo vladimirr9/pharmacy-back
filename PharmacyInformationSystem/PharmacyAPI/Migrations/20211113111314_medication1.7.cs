@@ -3,36 +3,56 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace PharmacyAPI.Migrations
 {
-    public partial class medication : Migration
+    public partial class medication17 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Medication",
+                name: "IngredientInMedication",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    MedicationID = table.Column<long>(type: "bigint", nullable: false),
+                    IngredientID = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IngredientInMedication", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InventoryLog",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PharmacyID = table.Column<long>(type: "bigint", nullable: false),
+                    MedicationID = table.Column<long>(type: "bigint", nullable: false),
+                    Quantity = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryLog", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Medications",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: true),
+                    Manufacturer = table.Column<string>(type: "text", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    Quantity = table.Column<int>(type: "integer", nullable: false)
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    Usage = table.Column<string>(type: "text", nullable: true),
+                    Precautions = table.Column<string>(type: "text", nullable: true),
+                    PotentialDangers = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Medication", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MedicationIngredient",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MedicationIngredient", x => x.Id);
+                    table.PrimaryKey("PK_Medications", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -95,42 +115,65 @@ namespace PharmacyAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "IngredientQuantity",
+                name: "MedicationIngredients",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Amount = table.Column<double>(type: "double precision", nullable: false),
-                    MedicationId = table.Column<long>(type: "bigint", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    MedicationId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_IngredientQuantity", x => x.Id);
+                    table.PrimaryKey("PK_MedicationIngredients", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_IngredientQuantity_Medication_MedicationId",
+                        name: "FK_MedicationIngredients_Medications_MedicationId",
                         column: x => x.MedicationId,
-                        principalTable: "Medication",
+                        principalTable: "Medications",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.InsertData(
-                table: "Medication",
-                columns: new[] { "Id", "Name", "Quantity", "Status" },
+                table: "IngredientInMedication",
+                columns: new[] { "Id", "IngredientID", "MedicationID" },
                 values: new object[,]
                 {
-                    { 1L, "Paracetamol", 150, 0 },
-                    { 2L, "Analgin", 50, 0 }
+                    { 1L, 1L, 1L },
+                    { 2L, 2L, 2L },
+                    { 3L, 2L, 1L }
                 });
 
             migrationBuilder.InsertData(
-                table: "MedicationIngredient",
-                columns: new[] { "Id", "Name" },
+                table: "InventoryLog",
+                columns: new[] { "Id", "MedicationID", "PharmacyID", "Quantity" },
                 values: new object[,]
                 {
-                    { 1L, "Vitamin C" },
-                    { 2L, "Fosfor" },
-                    { 3L, "Kalcijum" }
+                    { 4L, 3L, 2L, 120L },
+                    { 3L, 1L, 2L, 20L },
+                    { 5L, 1L, 3L, 14L },
+                    { 2L, 2L, 1L, 85L },
+                    { 1L, 1L, 1L, 65L }
+                });
+
+            migrationBuilder.InsertData(
+                table: "MedicationIngredients",
+                columns: new[] { "Id", "MedicationId", "Name" },
+                values: new object[,]
+                {
+                    { 1L, null, "Vitamin C" },
+                    { 2L, null, "Phosphorus" },
+                    { 3L, null, "Calcium" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Medications",
+                columns: new[] { "Id", "Manufacturer", "Name", "PotentialDangers", "Precautions", "Quantity", "Status", "Usage" },
+                values: new object[,]
+                {
+                    { 1L, "J&J", "Synthroid", "None.", "None.", 150, 0, "Taken once per day" },
+                    { 2L, "Merck & Co. Inc.", "Ventolin", "Not advised for pregnant women.", "None.", 200, 2, "Taken twice per day" },
+                    { 3L, "Pfizer Inc.", "Januvia", "Not advised for children.", "None.", 750, 0, "Taken once once every 5 hours" }
                 });
 
             migrationBuilder.InsertData(
@@ -143,9 +186,9 @@ namespace PharmacyAPI.Migrations
                 columns: new[] { "Id", "Adress", "AdressNumber", "City", "Name" },
                 values: new object[,]
                 {
-                    { 1L, "Rumenačka", "15", "Novi Sad", "Jankovic" },
-                    { 2L, "Bulevar oslobođenja", "135", "Novi Sad", "Jankovic" },
-                    { 3L, "Olge Jovanović", "18a", "Beograd", "Jankovic" }
+                    { 3L, "Olge Jovanović", "18a", "Beograd", "Janković" },
+                    { 2L, "Bulevar oslobođenja", "135", "Novi Sad", "Janković" },
+                    { 1L, "Rumenačka", "15", "Novi Sad", "Janković" }
                 });
 
             migrationBuilder.InsertData(
@@ -158,28 +201,22 @@ namespace PharmacyAPI.Migrations
                 columns: new[] { "Id", "HospitalName", "ObjectionIdFromHospitalDatabase", "TextResponse" },
                 values: new object[] { 1L, "Kleveta", 0L, "Bolnica1" });
 
-            migrationBuilder.InsertData(
-                table: "IngredientQuantity",
-                columns: new[] { "Id", "Amount", "MedicationId" },
-                values: new object[,]
-                {
-                    { 1, 35.399999999999999, 1L },
-                    { 2, 48.700000000000003, 2L }
-                });
-
             migrationBuilder.CreateIndex(
-                name: "IX_IngredientQuantity_MedicationId",
-                table: "IngredientQuantity",
+                name: "IX_MedicationIngredients_MedicationId",
+                table: "MedicationIngredients",
                 column: "MedicationId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "IngredientQuantity");
+                name: "IngredientInMedication");
 
             migrationBuilder.DropTable(
-                name: "MedicationIngredient");
+                name: "InventoryLog");
+
+            migrationBuilder.DropTable(
+                name: "MedicationIngredients");
 
             migrationBuilder.DropTable(
                 name: "Objection");
@@ -194,7 +231,7 @@ namespace PharmacyAPI.Migrations
                 name: "Response");
 
             migrationBuilder.DropTable(
-                name: "Medication");
+                name: "Medications");
         }
     }
 }

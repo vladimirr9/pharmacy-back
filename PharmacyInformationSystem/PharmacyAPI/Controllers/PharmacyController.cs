@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using PharmacyAPI.Filters;
+using PharmacyClassLib.Service.Interface;
+using PharmacyAPI.Dto;
 
 namespace PharmacyAPI.Controllers
 {
@@ -14,10 +16,12 @@ namespace PharmacyAPI.Controllers
     public class PharmacyController : ControllerBase
     {
         private readonly IPharmacyService pharmacyService;
+        private readonly IInventoryLogService inventoryLogService;
 
-        public PharmacyController(IPharmacyService medicationService)
+        public PharmacyController(IPharmacyService pharmacyService, IInventoryLogService inventoryLogService)
         {
-            this.pharmacyService = medicationService;
+            this.pharmacyService = pharmacyService;
+            this.inventoryLogService = inventoryLogService;
         }
 
         [HttpGet]
@@ -25,6 +29,14 @@ namespace PharmacyAPI.Controllers
         {
             return pharmacyService.GetAll();
         }
+
+        [HttpGet]
+        [Route("medication/{id?}")]
+        public List<InventoryItem> GetMedicationByPharmacy(long id)
+        {
+            return inventoryLogService.GetPharmacyInventory(id);
+        }
+
 
     }
 }
