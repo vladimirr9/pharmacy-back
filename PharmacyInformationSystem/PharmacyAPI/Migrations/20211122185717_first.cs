@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace PharmacyAPI.Migrations
 {
-    public partial class medication17 : Migration
+    public partial class first : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -22,7 +23,7 @@ namespace PharmacyAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "InventoryLog",
+                name: "InventoryLogs",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -33,7 +34,7 @@ namespace PharmacyAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_InventoryLog", x => x.Id);
+                    table.PrimaryKey("PK_InventoryLogs", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -56,7 +57,23 @@ namespace PharmacyAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Objection",
+                name: "News",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Title = table.Column<string>(type: "text", nullable: true),
+                    Text = table.Column<string>(type: "text", nullable: true),
+                    DurationStart = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    DurationEnd = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_News", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Objections",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -67,7 +84,7 @@ namespace PharmacyAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Objection", x => x.Id);
+                    table.PrimaryKey("PK_Objections", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -100,7 +117,7 @@ namespace PharmacyAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Response",
+                name: "Responses",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -111,7 +128,7 @@ namespace PharmacyAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Response", x => x.Id);
+                    table.PrimaryKey("PK_Responses", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -145,7 +162,7 @@ namespace PharmacyAPI.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "InventoryLog",
+                table: "InventoryLogs",
                 columns: new[] { "Id", "MedicationID", "PharmacyID", "Quantity" },
                 values: new object[,]
                 {
@@ -177,9 +194,9 @@ namespace PharmacyAPI.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Objection",
+                table: "Objections",
                 columns: new[] { "Id", "HopsitalName", "ObjectionIdFromHospitalDatabase", "TextObjection" },
-                values: new object[] { 1L, "Ne valja nista", 0L, "Bolnica1" });
+                values: new object[] { 1L, "Bolnica1", 0L, "Ne valja nista" });
 
             migrationBuilder.InsertData(
                 table: "Pharmacies",
@@ -197,9 +214,9 @@ namespace PharmacyAPI.Migrations
                 values: new object[] { "Bolnica1", "fds15d4fs6", "http:localhost:7313" });
 
             migrationBuilder.InsertData(
-                table: "Response",
+                table: "Responses",
                 columns: new[] { "Id", "HospitalName", "ObjectionIdFromHospitalDatabase", "TextResponse" },
-                values: new object[] { 1L, "Kleveta", 0L, "Bolnica1" });
+                values: new object[] { 1L, "Bolnica1", 0L, "Kleveta" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_MedicationIngredients_MedicationId",
@@ -213,13 +230,16 @@ namespace PharmacyAPI.Migrations
                 name: "IngredientInMedication");
 
             migrationBuilder.DropTable(
-                name: "InventoryLog");
+                name: "InventoryLogs");
 
             migrationBuilder.DropTable(
                 name: "MedicationIngredients");
 
             migrationBuilder.DropTable(
-                name: "Objection");
+                name: "News");
+
+            migrationBuilder.DropTable(
+                name: "Objections");
 
             migrationBuilder.DropTable(
                 name: "Pharmacies");
@@ -228,7 +248,7 @@ namespace PharmacyAPI.Migrations
                 name: "RegistratedHospitals");
 
             migrationBuilder.DropTable(
-                name: "Response");
+                name: "Responses");
 
             migrationBuilder.DropTable(
                 name: "Medications");
