@@ -65,6 +65,7 @@ namespace WebApplication1
             services.AddScoped<IResponseService, ResponseService>();
             services.AddScoped<IActionsAndNewsService, ActionsAndNewsService>();
             services.AddScoped<ISendingNewsService, SendingNewsRabbitMQService>();
+            services.AddScoped<MedicationConsumptionService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
