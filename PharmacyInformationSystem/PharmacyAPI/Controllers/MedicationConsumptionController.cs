@@ -16,10 +16,10 @@ namespace PharmacyAPI.Controllers
         private readonly MedicationConsumptionService medicationConsumptionService = new MedicationConsumptionService();
 
         [HttpGet]
-        public String GetConsumptionReport()
+        public void GetConsumptionReport()
         {
             medicationConsumptionService.SaveReport();
-            return "OK";
+          
         }
 
 

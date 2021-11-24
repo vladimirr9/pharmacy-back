@@ -18,6 +18,8 @@ namespace PharmacyClassLib.Service
         Boolean Delete(long id);
 
         Boolean Update(Medication medication);
-
+        Medication GetMedication(string name);
+        bool isExistMedication(string medicationName);
+        void GenerateReport(string medicationName);
     }
 }
