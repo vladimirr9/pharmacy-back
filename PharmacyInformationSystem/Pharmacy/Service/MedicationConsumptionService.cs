@@ -16,7 +16,7 @@ namespace PharmacyClassLib.Service
         public void SaveReport()
         {
             String filePath = Directory.GetCurrentDirectory();
-            String fileName = "ConsumptionReport.pdf";
+            String fileName = "MedicationConsumptionReport.pdf";
             String localFile = Path.Combine(filePath, fileName);
             String fileServer = @"\public\MedicationConsumptionReport.pdf";
 

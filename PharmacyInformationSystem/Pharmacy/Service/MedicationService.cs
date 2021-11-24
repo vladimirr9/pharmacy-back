@@ -2,8 +2,13 @@
 using PharmacyClassLib.Repository;
 using PharmacyClassLib.Repository.MedicationIngredientRepository;
 using PharmacyClassLib.Service;
+using Renci.SshNet;
+using Spire.Pdf;
+using Spire.Pdf.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -47,6 +52,16 @@ namespace PharmacyClassLib.Service
                 medication.MedicationIngredients = ingredientInMedicationService.GetIngredientByMedication(medication.Id);
             }
             return medication;
+        }
+        public Medication GetMedication(string name)
+        {
+            List<Medication> medications = medicationRepository.GetAll();
+            foreach (Medication medication in medicationRepository.GetAll())
+            {
+                if (medication.Name.Equals(name)) return medication;
+                
+            }
+            return null;
         }
 
         public List<Medication> GetAll()
@@ -97,6 +112,58 @@ namespace PharmacyClassLib.Service
                 medicationRepository.Update(medication);
             }
             return success;
+        }
+        public bool isExistMedication(string name)
+        {
+            List<Medication> medications = medicationRepository.GetAll();
+            foreach (Medication medication in medications)
+            {
+                if (medication.Name.Equals(name)) return true;
+            }
+            return false;
+        }
+        public void GenerateReport(string medicationName)
+        {
+            String filePath = Directory.GetCurrentDirectory();
+            String fileName = "MedicationSpecification_" + medicationName + ".pdf";
+            PdfDocument doc = new PdfDocument();
+            PdfPageBase page = doc.Pages.Add();
+            page.Canvas.DrawString(WriteContent(medicationName), new PdfFont(PdfFontFamily.Helvetica, 11f), new PdfSolidBrush(Color.Black), 10, 10);
+            StreamWriter File = new StreamWriter(Path.Combine(filePath, fileName), true);
+            //ne smeju da postoje dva fajla sa istim imenom i ovde izbacuje exception ako hocemo da dodamo fajl sa istim imenom
+            doc.SaveToStream(File.BaseStream);
+            // File.Write(WriteContent(duration));
+
+            File.Close();
+            doc.Close();
+
+            SendReport(Path.Combine(filePath, fileName));
+
+        }
+        private string WriteContent(String medicationName)
+        {
+            Medication medication = GetMedication(medicationName);
+            string content = " \n\n Medication name:" + medicationName + " .\n";
+            content += " Manufacturer:" + medication.Manufacturer + " .\n";
+            content += " Usage:" + medication.Usage + " .\n";
+            content += " Precautions:" + medication.Precautions + " .\n";
+            content += " PotentialDangers:" + medication.PotentialDangers + " .\n";
+
+            return content;
+        }
+
+        private void SendReport(String filePath)
+        {
+            using (SftpClient client = new SftpClient(new PasswordConnectionInfo("192.168.56.1", "tester", "password")))
+            {
+                client.Connect();
+
+                using (Stream stream = File.OpenRead(filePath))
+                {
+                    client.UploadFile(stream, @"\public\" + Path.GetFileName(filePath), null);
+                }
+                client.Disconnect();
+            }
         }
 
     }
