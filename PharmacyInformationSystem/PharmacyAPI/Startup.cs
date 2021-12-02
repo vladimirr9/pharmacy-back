@@ -20,6 +20,11 @@ using PharmacyClassLib.Service.Interface;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
+using Grpc.Core;
+using PharmacyAPI.Protos;
+using PharmacyAPI;
+using PharmacyAPI.Controllers;
+using PharmacyAPI.Filters;
 
 namespace WebApplication1
 {
@@ -68,11 +73,15 @@ namespace WebApplication1
             services.AddScoped<IResponseService, ResponseService>();
             services.AddScoped<IActionsAndNewsService, ActionsAndNewsService>();
             services.AddScoped<ISendingNewsService, SendingNewsRabbitMQService>();
+
             services.AddScoped<MedicationConsumptionService>();
+
         }
 
+        private Server server;
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
         {
             if (env.IsDevelopment())
             {
@@ -107,6 +116,27 @@ namespace WebApplication1
             {
                 endpoints.MapControllers();
             });
+            MyDbContext dbContext = new MyDbContext();
+            IPharmacyService pharmacyService = new PharmacyService(new PharmacyRepository(dbContext));
+            IMedicationService medicationService = new MedicationService(new MedicationRepository(dbContext), new MedicationIngredientService(new MedicationIngredientRepository(dbContext), new IngredientInMedicationService(new IngredientsInMedicationRepository(dbContext), new MedicationRepository(dbContext), new MedicationIngredientRepository(dbContext))), new IngredientInMedicationService(new IngredientsInMedicationRepository(dbContext), new MedicationRepository(dbContext), new MedicationIngredientRepository(dbContext)));
+            IInventoryLogService inventoryLogService = new InventoryLogService(new InventoryLogRepository(dbContext), medicationService, pharmacyService);
+            GrpcApiKeyFilter grpcApiKeyFilter = new GrpcApiKeyFilter(new RegisteredHospitalRepository(dbContext));
+            server = new Server
+            {
+                Services = { MedicationGrpcService.BindService(new MedicationGrpcController(pharmacyService, inventoryLogService, medicationService, grpcApiKeyFilter)) },
+                Ports = { new ServerPort("localhost", 4111, ServerCredentials.Insecure) }
+            };
+            server.Start();
+
+            applicationLifetime.ApplicationStopping.Register(OnShutDown);
+        }
+
+        private void OnShutDown()
+        {
+            if(server != null)
+            {
+                server.ShutdownAsync().Wait();
+            }
         }
     }
 }
