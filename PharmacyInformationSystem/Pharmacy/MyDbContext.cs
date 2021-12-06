@@ -27,11 +27,11 @@ namespace PharmacyClassLib
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            String server = Environment.GetEnvironmentVariable("SERVER");
-            String port = Environment.GetEnvironmentVariable("PORT");
-            String databaseName = Environment.GetEnvironmentVariable("DATABASE");
-            String username = Environment.GetEnvironmentVariable("USERNAME");
-            String password = Environment.GetEnvironmentVariable("PASSWORD");
+            String server = Environment.GetEnvironmentVariable("SERVER")??"localhost";
+            String port = Environment.GetEnvironmentVariable("PORT")??"5432";
+            String databaseName = Environment.GetEnvironmentVariable("DATABASE")??"Pharmacy";
+            String username = Environment.GetEnvironmentVariable("USERNAME")??"postgres";
+            String password = Environment.GetEnvironmentVariable("PASSWORD")??"admin";
             String connectionString = $"Server={server}; Port ={port}; Database ={databaseName}; User Id = {username}; Password ={password};";
             optionsBuilder.UseNpgsql(connectionString);
         }
