@@ -7,6 +7,7 @@ using PharmacyClassLib.Repository;
 using PharmacyClassLib.Service;
 using PharmacyClassLib;
 using Microsoft.EntityFrameworkCore;
+using PharmacyAPI.BackgroundService;
 using PharmacyClassLib.Model;
 using PharmacyClassLib.Repository.MedicationIngredientRepository;
 using PharmacyClassLib.Repository.MedicationIngredientsRepository;
@@ -79,6 +80,7 @@ namespace WebApplication1
             services.AddScoped<IPharmacyOfferService, PharmacyOfferService>();
             services.AddScoped<MedicationConsumptionService>();
 
+            services.AddHostedService<CompressionOfOldFiles>();
         }
 
         private Server server;
