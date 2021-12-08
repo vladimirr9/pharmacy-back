@@ -157,5 +157,18 @@ namespace PharmacyClassLib.Service
             }
             return false;
         }
+
+        public bool CheckIfLogExistsInPharmacy(long pharmacyId, long medicationId, long quantity)
+        {
+            foreach (InventoryItem inventoryItem in GetPharmacyInventory(pharmacyId))
+            {                
+                if (inventoryItem.Medication.Id != medicationId)
+                {
+                    if (inventoryItem.Quantity >= quantity)
+                        return true;
+                }
+            }
+            return false;
+        }
     }
 }
