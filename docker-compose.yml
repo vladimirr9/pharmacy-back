@@ -1,0 +1,27 @@
+version: '3.4'
+
+services:
+  pharmacy:
+    image: psw8org/pharmacy-back:latest
+    environment:
+       SERVER: "database"
+       DB_PORT: "5432"
+       DB_NAME: "Pharmacy"
+       DB_USER: "postgres"
+       DB_PASSWORD: "root"
+    expose:
+      - "80"
+    ports:
+      - "5101:80"
+    #extra hosts can be used for standalone SQL Server or services at the dev PC
+    depends_on:
+      - database
+
+  database:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: "root"
+      POSTGRES_USER: "postgres"
+    ports:
+      - "5555:5432"

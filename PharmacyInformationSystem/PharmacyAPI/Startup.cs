@@ -17,6 +17,9 @@ using PharmacyClassLib.Repository.ResponseRepository;
 using PharmacyClassLib.Repository.InventoryLogRepository;
 using PharmacyClassLib.Repository.NewsRepository;
 using PharmacyClassLib.Service.Interface;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using System;
 
 namespace WebApplication1
 {
@@ -76,6 +79,24 @@ namespace WebApplication1
                 app.UseDeveloperExceptionPage();
             }
 
+            using (var scope = app.ApplicationServices.CreateScope())
+            using (var context = scope.ServiceProvider.GetService<MyDbContext>())
+            {
+                
+
+                RelationalDatabaseCreator databaseCreator = (RelationalDatabaseCreator)context.Database.GetService<IDatabaseCreator>();
+
+                try
+                {
+                    context.Database.Migrate();
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Failed to execute migration");
+                }
+                
+               
+            }
             app.UseRouting();
 
             app.UseCors("MyPolicy");
