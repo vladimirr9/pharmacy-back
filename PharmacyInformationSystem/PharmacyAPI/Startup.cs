@@ -22,6 +22,7 @@ using PharmacyAPI.Protos;
 using PharmacyAPI;
 using PharmacyAPI.Controllers;
 using PharmacyAPI.Filters;
+using PharmacyClassLib.Repository.PharmacyOfferRepository;
 
 namespace WebApplication1
 {
@@ -59,6 +60,8 @@ namespace WebApplication1
             services.AddTransient<IIngredientsInMedicationRepository, IngredientsInMedicationRepository>();
             services.AddTransient<IInventoryLogRepository, InventoryLogRepository>();
             services.AddTransient<INewsRepository, NewsRepository>();
+            services.AddTransient<IPharmacyOfferRepository, PharmacyOfferRepository>();
+            services.AddTransient<IPharmacyOfferComponentRepository, PharmacyOfferComponentRepository>();
 
             services.AddScoped<IIngredientInMedicationService, IngredientInMedicationService>();
             services.AddScoped<IMedicationService, MedicationService>();
@@ -70,7 +73,7 @@ namespace WebApplication1
             services.AddScoped<IResponseService, ResponseService>();
             services.AddScoped<IActionsAndNewsService, ActionsAndNewsService>();
             services.AddScoped<ISendingNewsService, SendingNewsRabbitMQService>();
-
+            services.AddScoped<IPharmacyOfferService, PharmacyOfferService>();
             services.AddScoped<MedicationConsumptionService>();
 
         }
@@ -97,7 +100,13 @@ namespace WebApplication1
             });
             MyDbContext dbContext = new MyDbContext();
             IPharmacyService pharmacyService = new PharmacyService(new PharmacyRepository(dbContext));
-            IMedicationService medicationService = new MedicationService(new MedicationRepository(dbContext), new MedicationIngredientService(new MedicationIngredientRepository(dbContext), new IngredientInMedicationService(new IngredientsInMedicationRepository(dbContext), new MedicationRepository(dbContext), new MedicationIngredientRepository(dbContext))), new IngredientInMedicationService(new IngredientsInMedicationRepository(dbContext), new MedicationRepository(dbContext), new MedicationIngredientRepository(dbContext)));
+            IMedicationService medicationService = new MedicationService(
+                new MedicationRepository(dbContext), 
+                new IngredientInMedicationService(
+                    new IngredientsInMedicationRepository(dbContext), 
+                    new MedicationRepository(dbContext), 
+                    new MedicationIngredientRepository(dbContext)),                 
+                new PharmacyOfferComponentRepository(dbContext));
             IInventoryLogService inventoryLogService = new InventoryLogService(new InventoryLogRepository(dbContext), medicationService, pharmacyService);
             GrpcApiKeyFilter grpcApiKeyFilter = new GrpcApiKeyFilter(new RegisteredHospitalRepository(dbContext));
             server = new Server

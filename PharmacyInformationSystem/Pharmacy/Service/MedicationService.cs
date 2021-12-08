@@ -1,7 +1,10 @@
 ﻿using PharmacyClassLib.Model;
+using PharmacyClassLib.Model.Relations;
 using PharmacyClassLib.Repository;
 using PharmacyClassLib.Repository.MedicationIngredientRepository;
+using PharmacyClassLib.Repository.PharmacyOfferRepository;
 using PharmacyClassLib.Service;
+using PharmacyClassLib.Service.Interface;
 using Renci.SshNet;
 using Spire.Pdf;
 using Spire.Pdf.Graphics;
@@ -17,14 +20,16 @@ namespace PharmacyClassLib.Service
     public class MedicationService : IMedicationService
     {
         private readonly IMedicationRepository medicationRepository;
-        private readonly IMedicationIngredientService ingredientService;
         private readonly IIngredientInMedicationService ingredientInMedicationService;
+        private readonly IPharmacyOfferComponentRepository pharmacyOfferComponentRepository;
 
-        public MedicationService(IMedicationRepository medicationRepository, IMedicationIngredientService ingredientService, IIngredientInMedicationService ingredientInMedicationService)
+        public MedicationService(IMedicationRepository medicationRepository, 
+            IIngredientInMedicationService ingredientInMedicationService, 
+            IPharmacyOfferComponentRepository pharmacyOfferComponentRepository)
         {
             this.medicationRepository = medicationRepository;
-            this.ingredientService = ingredientService;
             this.ingredientInMedicationService = ingredientInMedicationService;
+            this.pharmacyOfferComponentRepository = pharmacyOfferComponentRepository;
         }
 
         public Medication Create(Medication newMedication)
@@ -39,6 +44,7 @@ namespace PharmacyClassLib.Service
             {
                 success = true;
                 ingredientInMedicationService.RemoveMedicineReferences(id);
+                RemoveMedicineComponentReferences(id);
                 medicationRepository.Delete(id);
             }
             return success;
@@ -55,7 +61,6 @@ namespace PharmacyClassLib.Service
         }
         public Medication GetMedication(string name)
         {
-            List<Medication> medications = medicationRepository.GetAll();
             foreach (Medication medication in medicationRepository.GetAll())
             {
                 if (medication.Name.Equals(name)) return medication;
@@ -87,7 +92,7 @@ namespace PharmacyClassLib.Service
                 foreach (string ingredient in ingredients)
                 {
                     List<MedicationIngredient> matchingIngredients = medication.MedicationIngredients.Where(medIngredient => medIngredient.Name.ToUpper().Contains(ingredient.ToUpper())).ToList();
-                    if (matchingIngredients.Count() > 0)
+                    if (matchingIngredients.Count > 0)
                     {
                         add = true;
                         break;
@@ -164,6 +169,14 @@ namespace PharmacyClassLib.Service
                 }
                 client.Disconnect();
             }
+        }
+
+        public void RemoveMedicineComponentReferences(long id)
+        {
+            foreach (PharmacyOfferComponent component in pharmacyOfferComponentRepository.GetAll())
+                if (component.MedicationID == id)
+                    pharmacyOfferComponentRepository.Delete(component.Id);
+
         }
 
     }
