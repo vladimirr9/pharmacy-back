@@ -7,14 +7,31 @@ using System.Threading.Tasks;
 
 namespace PharmacyAPI.Dto
 {
-    public class NotificationDTO 
+    public class NotificationDTO
     {
-        public string Neki { get; set; }
-        public NotificationDTO()
-        { }
-        public NotificationDTO(string neki)
+        public long Id { get; set; }
+        public string Title { get; set; }
+        public bool Read { get; set; }
+        public string ContentNotification { get; set; }
+        public string FileName { get; set; }
+
+        public NotificationDTO() { }
+
+        public NotificationDTO(string title, bool read, string contents, string files)
         {
-            this.Neki = neki;
+          
+            Title = title;
+            Read = read;
+            ContentNotification = contents;
+            FileName = files;
+        }
+        public NotificationDTO(long id,string title, bool read, string contents, string files)
+        {
+            Id = id;
+            Title = title;
+            Read = read;
+            ContentNotification = contents;
+            FileName = files;
         }
 
     }

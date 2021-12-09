@@ -21,8 +21,8 @@ namespace PharmacyAPI.Controllers
         public IActionResult SaveConsumptionReport()
         {
             
-            NotificationDTO notificationDTO = new NotificationDTO(medicationConsumptionService.SaveReport());
-            string neki = medicationConsumptionService.SaveReport();
+            //NotificationDTO notificationDTO = new NotificationDTO(medicationConsumptionService.SaveReport());
+            //string neki = medicationConsumptionService.SaveReport();
             /* byte[] buff = null;
              string nesto = medicationConsumptionService.SaveReport();
              // Initialize FileStream object
@@ -33,7 +33,7 @@ namespace PharmacyAPI.Controllers
              // Load the file contents in the byte array
              buff = br.ReadBytes((int)numBytes);
              fs.Close();*/
-            var fileStream = new FileStream(neki,
+            var fileStream = new FileStream(medicationConsumptionService.SaveReport(),
                                      FileMode.Open,
                                      FileAccess.Read
                                    );
