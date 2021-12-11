@@ -4,10 +4,10 @@ services:
   pharmacy:
     image: psw8org/pharmacy-back:latest
     networks:
-      - database_net
+      - pharmacy_database_net
     container_name: Pharmacy_Back
     environment:
-       SERVER: "database"
+       SERVER: "database-pharmacy"
        DB_PORT: "5432"
        DB_NAME: "Pharmacy"
        DB_USER: "postgres"
@@ -19,21 +19,90 @@ services:
     restart: on-failure
     #extra hosts can be used for standalone SQL Server or services at the dev PC
     depends_on:
-      - database
+      - database-pharmacy
 
-  database:
+  patients-portal:
+    image: psw8org/patients-portal-back:latest
+    networks:
+      - patients_database_net
+    container_name: Patients_Portal_Back
+    environment:
+       SERVER: "database-patients"
+       DB_PORT: "5432"
+       DB_NAME: "psw_database"
+       DB_USER: "postgres"
+       DB_PASSWORD: "wasd"
+    expose:
+      - "80"
+    ports:
+      - "5111:80"
+    restart: on-failure
+    #extra hosts can be used for standalone SQL Server or services at the dev PC
+    depends_on:
+      - database-patients
+
+  integrations:
+    image: psw8org/integration-app:latest
+    networks:
+      - integrations_database_net
+    container_name: Integrations_Back
+    environment:
+       SERVER: "database-integration"
+       DB_PORT: "5432"
+       DB_NAME: "Integration"
+       DB_USER: "postgres"
+       DB_PASSWORD: "root"
+    expose:
+      - "80"
+    ports:
+      - "5112:80"
+    restart: on-failure
+    #extra hosts can be used for standalone SQL Server or services at the dev PC
+    depends_on:
+      - database-integration
+
+  
+  database-patients:
+    image: postgres:13
+    restart: always
+    container_name: Patients_Portal_Database
+    networks:
+      - patients_database_net
+    environment:
+      POSTGRES_PASSWORD: "wasd"
+      POSTGRES_USER: "postgres"
+    ports:
+      - "8080:5432"
+  database-pharmacy:
     image: postgres:13
     restart: always
     container_name: Pharmacy_Database
     networks:
-      - database_net
+      - pharmacy_database_net
     environment:
       POSTGRES_PASSWORD: "root"
       POSTGRES_USER: "postgres"
     ports:
-      - "5432:5432"
+      - "8081:5432"
+  database-integration:
+    image: postgres:13
+    restart: always
+    container_name: Integrations_Database
+    networks:
+      - integrations_database_net
+    environment:
+      POSTGRES_PASSWORD: "root"
+      POSTGRES_USER: "postgres"
+    ports:
+      - "8082:5432"
 
 networks:
-  database_net:
-    name: database_net
+  pharmacy_database_net:
+    name: pharmacy_database_net
+    driver: bridge
+  patients_database_net:
+    name: patients_database_net
+    driver: bridge
+  integrations_database_net:
+    name: integrations_database_net
     driver: bridge
