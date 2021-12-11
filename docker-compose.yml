@@ -1,10 +1,28 @@
 version: '3.4'
+#SMART_TUTOR_FRONT_API_URL=http://127.0.0.1:8080/smart-tutor/api/
+
 
 services:
+  gateway:
+      #image: cleancadet/gateway:${GATEWAY_VERSION-latest}
+      build:
+        context: .
+        target: gatewayWithFront
+        args:
+          - SMART_TUTOR_API_URL=http://localhost:8080/api/
+      restart: on-failure
+      networks:
+        - pharmacy-application_net
+      ports:
+        - "8085:8080"
+      depends_on:
+        - pharmacy
+
   pharmacy:
     image: psw8org/pharmacy-back:latest
     networks:
       - pharmacy_database_net
+      - pharmacy-application_net
     container_name: Pharmacy_Back
     environment:
        SERVER: "database-pharmacy"
@@ -15,7 +33,7 @@ services:
     expose:
       - "80"
     ports:
-      - "5101:80"
+      - "8080:80"
     restart: on-failure
     #extra hosts can be used for standalone SQL Server or services at the dev PC
     depends_on:
@@ -72,7 +90,7 @@ services:
       POSTGRES_PASSWORD: "wasd"
       POSTGRES_USER: "postgres"
     ports:
-      - "8080:5432"
+      - "7083:5432"
   database-pharmacy:
     image: postgres:13
     restart: always
@@ -83,7 +101,7 @@ services:
       POSTGRES_PASSWORD: "root"
       POSTGRES_USER: "postgres"
     ports:
-      - "8081:5432"
+      - "7081:5432"
   database-integration:
     image: postgres:13
     restart: always
@@ -94,7 +112,7 @@ services:
       POSTGRES_PASSWORD: "root"
       POSTGRES_USER: "postgres"
     ports:
-      - "8082:5432"
+      - "7082:5432"
 
 networks:
   pharmacy_database_net:
@@ -105,4 +123,7 @@ networks:
     driver: bridge
   integrations_database_net:
     name: integrations_database_net
+    driver: bridge
+  pharmacy-application_net:
+    name: pharmacy-application_net
     driver: bridge
