@@ -19,7 +19,7 @@ namespace PharmacyAPI.BackgroundService
         {
             compressionTimer.Elapsed += new ElapsedEventHandler(CompressOldFiles);
             //compressionTimer.Interval = 10000;    // 10 sekundi
-            compressionTimer.Interval = 2592000000;  // 30 dana
+            compressionTimer.Interval = 259200000;  // 30 dana
             compressionTimer.Enabled = true;
             return Task.CompletedTask;
         }
