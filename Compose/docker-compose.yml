@@ -3,10 +3,10 @@ version: '3.4'
 
 
 services:
-  gateway:
-      #image: cleancadet/gateway:${GATEWAY_VERSION-latest}
+  pharmacy-front:
       build:
         context: .
+        dockerfile: Dockerfile_Pharmacy
         target: gatewayWithFront
         args:
           - SMART_TUTOR_API_URL=http://localhost:8080/api/
@@ -17,6 +17,20 @@ services:
         - "8085:8080"
       depends_on:
         - pharmacy
+  # patients-front:
+  #     build:
+  #       context: .
+  #       dockerfile: Dockerfile_Patients
+  #       target: gatewayWithFront
+  #       args:
+  #         - SMART_TUTOR_API_URL=http://localhost:5111/api/
+  #     restart: on-failure
+  #     networks:
+  #       - patients-application_net
+  #     ports:
+  #       - "8086:8080"
+  #     depends_on:
+  #       - patients-portal
 
   pharmacy:
     image: psw8org/pharmacy-back:latest
@@ -43,6 +57,7 @@ services:
     image: psw8org/patients-portal-back:latest
     networks:
       - patients_database_net
+      - patients-application_net
     container_name: Patients_Portal_Back
     environment:
        SERVER: "database-patients"
@@ -126,4 +141,7 @@ networks:
     driver: bridge
   pharmacy-application_net:
     name: pharmacy-application_net
+    driver: bridge
+  patients-application_net:
+    name: patients-application_net
     driver: bridge
