@@ -27,6 +27,7 @@ using PharmacyAPI;
 using PharmacyAPI.Controllers;
 using PharmacyAPI.Filters;
 using PharmacyClassLib.Repository.PharmacyOfferRepository;
+using PharmacyClassLib.Repository.NotificationRepository;
 
 namespace WebApplication1
 {
@@ -66,9 +67,11 @@ namespace WebApplication1
             services.AddTransient<INewsRepository, NewsRepository>();
             services.AddTransient<IPharmacyOfferRepository, PharmacyOfferRepository>();
             services.AddTransient<IPharmacyOfferComponentRepository, PharmacyOfferComponentRepository>();
+            services.AddTransient<INotificationRepository, NotificationRepository>();
 
             services.AddScoped<IIngredientInMedicationService, IngredientInMedicationService>();
             services.AddScoped<IMedicationService, MedicationService>();
+            services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IPharmacyService, PharmacyService>();
             services.AddScoped<IHospitalRegistrationService, HospitalRegistrationService>();
             services.AddScoped<IMedicationIngredientService, MedicationIngredientService>();

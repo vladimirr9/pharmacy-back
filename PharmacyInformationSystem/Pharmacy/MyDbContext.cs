@@ -19,6 +19,7 @@ namespace PharmacyClassLib
         public DbSet<Response> Responses { get; set; }
         public DbSet<PharmacyOffer> PharmacyOffers { get; set; }
         public DbSet<PharmacyOfferComponent> PharmacyOfferComponents { get; set; }
+        public DbSet<Notification> Notification { get; set; }
 
         public MyDbContext()
         {
@@ -45,6 +46,10 @@ namespace PharmacyClassLib
                 new Pharmacy(1, "Janković", "Novi Sad", "Rumenačka", "15"),
                 new Pharmacy(2, "Janković", "Novi Sad", "Bulevar oslobođenja", "135"),
                 new Pharmacy(3, "Janković", "Beograd", "Olge Jovanović", "18a")
+                );
+
+            modelBuilder.Entity<Notification>().HasData(
+                new Notification(1, "Izvestaj", true, "Ovde ce da bude tekst nekog izvestaja","MedicationSpecifiation.pdf")
                 );
 
             modelBuilder.Entity<Objection>().HasData(

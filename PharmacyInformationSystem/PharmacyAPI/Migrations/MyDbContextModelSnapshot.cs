@@ -148,6 +148,40 @@ namespace PharmacyAPI.Migrations
                     b.ToTable("News");
                 });
 
+            modelBuilder.Entity("PharmacyClassLib.Model.Notification", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("ContentNotification")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Read")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notification");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            ContentNotification = "Ovde ce da bude tekst nekog izvestaja",
+                            FileName = "MedicationSpecifiation.pdf",
+                            Read = true,
+                            Title = "Izvestaj"
+                        });
+                });
+
             modelBuilder.Entity("PharmacyClassLib.Model.Objection", b =>
                 {
                     b.Property<long>("Id")
