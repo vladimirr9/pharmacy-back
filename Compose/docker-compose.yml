@@ -1,6 +1,4 @@
 version: '3.4'
-#SMART_TUTOR_FRONT_API_URL=http://127.0.0.1:8080/smart-tutor/api/
-
 
 services:
   pharmacy-front:
@@ -8,15 +6,17 @@ services:
         context: .
         dockerfile: Dockerfile_Pharmacy
         target: gatewayWithFront
-        args:
-          - SMART_TUTOR_API_URL=http://localhost:8080/api/
+        #args:
+        #  - SMART_TUTOR_API_URL=http://localhost:8080/api/
       restart: on-failure
       networks:
         - pharmacy-application_net
+        - patients-application_net
       ports:
         - "8085:8080"
       depends_on:
         - pharmacy
+        - patients-portal
   # patients-front:
   #     build:
   #       context: .
@@ -73,7 +73,6 @@ services:
     #extra hosts can be used for standalone SQL Server or services at the dev PC
     depends_on:
       - database-patients
-
   integrations:
     image: psw8org/integration-app:latest
     networks:
