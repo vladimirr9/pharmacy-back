@@ -10,7 +10,7 @@ npm install
 COPY ./environment.ts.template ./app/pharmacy-app
 RUN cd app/pharmacy-app || exit && \
 export API_HOST="http://localhost:8080/api/" && \
-envsubst < environment.ts.template > ./src/environments/environment.ts || exit && \
+envsubst < environment.ts.template > ./src/environments/environment.prod.ts || exit && \
 npm run build --prod && \
 cd dist && \
 mv "$(find . -maxdepth 1 -type d | tail -n 1)" /app
