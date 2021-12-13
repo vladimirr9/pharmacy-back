@@ -30,7 +30,8 @@ COPY ./environment.ts.template ./patients/patient-application
 RUN cd patients/patient-application || exit && \
 export NODE_OPTIONS=--openssl-legacy-provider && \
 export API_HOST="http://localhost:5111/api/" && \
-envsubst < environment.ts.template > ./src/environments/environment.ts || exit && \
+envsubst < environment.ts.template > ./src/environments/environment.prod.ts || exit && \
+cat ./src/environments/environment.ts && \
 npm run build --prod && \
 cd dist && \
 mv "$(find . -maxdepth 1 -type d | tail -n 1)" /patients
