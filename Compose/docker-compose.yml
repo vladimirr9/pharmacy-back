@@ -11,7 +11,7 @@ services:
         - pharmacy-application_net
         - patients-application_net
       ports:
-        - "8085:8080"
+        - "8080:8080"
       depends_on:
         - pharmacy
         - patients-portal
@@ -31,7 +31,7 @@ services:
     expose:
       - "80"
     ports:
-      - "8080:80"
+      - "5110:80"
     restart: on-failure
     #extra hosts can be used for standalone SQL Server or services at the dev PC
     depends_on:

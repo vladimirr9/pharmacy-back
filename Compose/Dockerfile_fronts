@@ -11,7 +11,7 @@ npm config set legacy-peer-deps true && \
 npm install
 COPY ./environment.ts.template ./patients-portal/patient-application
 RUN cd patients-portal/patient-application || exit && \
-export API_HOST="http://localhost:5111/api/" && \
+export API_HOST="http://localhost:8080/patients-portal/api/" && \
 envsubst < environment.ts.template > ./src/environments/environment.prod.ts || exit && \
 cat ./src/environments/environment.ts && \
 #needed, otherwise build fails
@@ -32,7 +32,7 @@ cd pharmacy-app && \
 npm install
 COPY ./environment.ts.template ./pharmacy/pharmacy-app
 RUN cd pharmacy/pharmacy-app || exit && \
-export API_HOST="http://localhost:8080/api/" && \
+export API_HOST="http://localhost:8080/pharmacy/api/" && \
 envsubst < environment.ts.template > ./src/environments/environment.prod.ts || exit && \
 npm run build -- --base-href='/pharmacy-front/' && \
 cd dist && \
