@@ -1,0 +1,5 @@
+export const environment = {
+    production: false,
+    integrationsAPI: '${INTEGRATIONS_API}',
+    patientsAPI: '${PATIENTS_API}',
+};

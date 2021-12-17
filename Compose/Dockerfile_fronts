@@ -1,11 +1,12 @@
-FROM node:17-alpine3.12 AS frontBuildPatient
+FROM node:17-alpine3.12 AS frontbuildbase
 WORKDIR /src
-
 RUN apk update && apk add build-base dumb-init curl tar gettext
+
+
+FROM frontbuildbase as frontBuildPatient
 RUN curl -L "https://github.com/PSW-Organization-8/patients-portal-front/archive/refs/heads/develop.tar.gz" | tar -xz && \
 mv "$(find . -maxdepth 1 -type d | tail -n 1)" patients-portal && \
-cd patients-portal && \
-cd patient-application && \
+cd patients-portal/patient-application && \
 #needed, otherwise npm install fails
 npm config set legacy-peer-deps true && \ 
 npm install
@@ -13,7 +14,6 @@ COPY ./environment.ts.template ./patients-portal/patient-application
 RUN cd patients-portal/patient-application || exit && \
 export API_HOST="http://localhost:8080/patients-portal/api/" && \
 envsubst < environment.ts.template > ./src/environments/environment.prod.ts || exit && \
-cat ./src/environments/environment.ts && \
 #needed, otherwise build fails
 export NODE_OPTIONS=--openssl-legacy-provider && \
 npm run build && \
@@ -21,14 +21,10 @@ cd dist && \
 mv "$(find . -maxdepth 1 -type d | tail -n 1)" /patients-portal
 
 
-FROM node:17-alpine3.12 AS frontBuildPharmacy
-WORKDIR /src
-
-RUN apk update && apk add build-base dumb-init curl tar gettext
+FROM frontbuildbase as frontBuildPharmacy
 RUN curl -L "https://github.com/PSW-Organization-8/pharmacy-front/archive/refs/heads/develop.tar.gz" | tar -xz && \
 mv "$(find . -maxdepth 1 -type d | tail -n 1)" pharmacy && \
-cd pharmacy && \
-cd pharmacy-app && \
+cd pharmacy/pharmacy-app && \
 npm install
 COPY ./environment.ts.template ./pharmacy/pharmacy-app
 RUN cd pharmacy/pharmacy-app || exit && \
@@ -39,8 +35,29 @@ cd dist && \
 mv "$(find . -maxdepth 1 -type d | tail -n 1)" /pharmacy
 
 
+FROM frontbuildbase as frontBuildManager
+RUN curl -L "https://github.com/PSW-Organization-8/manager-front/archive/refs/heads/fix_no_scss.tar.gz" | tar -xz && \
+mv "$(find . -maxdepth 1 -type d | tail -n 1)" manager && \
+cd manager/manager-application && \
+#needed, otherwise npm install fails
+npm config set legacy-peer-deps true && \ 
+npm install --save-dev style-loader
+COPY ./environment-manager.ts.template ./manager/manager-application
+RUN cd manager/manager-application || exit && \
+export INTEGRATIONS_API="http://localhost:8080/integrations/api/" && \
+export PATIENTS_API="http://localhost:8080/patients-portal/api/" && \
+rm -f ./src/environments/environment.prod.ts && \
+envsubst < environment-manager.ts.template > ./src/environments/environment.prod.ts || exit && \
+#needed, otherwise build fails
+export NODE_OPTIONS=--openssl-legacy-provider && \
+npm run build --  --base-href='/manager-front/' && \
+cd dist && \
+mv "$(find . -maxdepth 1 -type d | tail -n 1)" /manager
+
+
 FROM nginx:1.19.8-alpine AS gatewayWithFront
 COPY --from=frontBuildPatient /patients-portal /usr/share/nginx/html/patients-portal
 COPY --from=frontBuildPharmacy /pharmacy /usr/share/nginx/html/pharmacy
+COPY --from=frontBuildManager /manager /usr/share/nginx/html/manager
 COPY ./nginx.conf /etc/nginx/nginx.conf
 COPY ./api_gateway.conf /etc/nginx/api_gateway.conf

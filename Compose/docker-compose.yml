@@ -10,11 +10,13 @@ services:
       networks:
         - pharmacy-application_net
         - patients-application_net
+        - integrations-application_net
       ports:
         - "8080:8080"
       depends_on:
         - pharmacy
         - patients-portal
+        - integration
 
   pharmacy:
     image: psw8org/pharmacy-back:latest
@@ -58,10 +60,11 @@ services:
     depends_on:
       - database-patients
   
-  integrations:
+  integration:
     image: psw8org/integration-app:latest
     networks:
       - integrations_database_net
+      - integrations-application_net
     container_name: Integrations_Back
     environment:
        SERVER: "database-integration"
@@ -130,4 +133,7 @@ networks:
     driver: bridge
   patients-application_net:
     name: patients-application_net
+    driver: bridge
+  integrations-application_net:
+    name: integrations-application_net
     driver: bridge
