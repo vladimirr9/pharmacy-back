@@ -36,7 +36,7 @@ mv "$(find . -maxdepth 1 -type d | tail -n 1)" /pharmacy
 
 
 FROM frontbuildbase as frontBuildManager
-RUN curl -L "https://github.com/PSW-Organization-8/manager-front/archive/refs/heads/fix_no_scss.tar.gz" | tar -xz && \
+RUN curl -L "https://github.com/PSW-Organization-8/manager-front/archive/refs/heads/develop.tar.gz" | tar -xz && \
 mv "$(find . -maxdepth 1 -type d | tail -n 1)" manager && \
 cd manager/manager-application && \
 #needed, otherwise npm install fails
