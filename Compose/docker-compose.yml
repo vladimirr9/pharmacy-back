@@ -60,6 +60,18 @@ services:
     depends_on:
       - database-patients
   
+  rabbitmq:
+        image: rabbitmq:3-management-alpine
+        container_name: rabbitmq
+        networks:
+        - integrations-application_net
+        environment:
+            RABBITMQ_DEFAULT_USER: "guest"
+            RABBITMQ_DEFAULT_PASS: "guest"
+        ports:
+            - 5672:5672
+            - 15672:15672
+  
   integration:
     image: psw8org/integration-app:latest
     networks:
