@@ -20,6 +20,9 @@ namespace PharmacyClassLib
         public DbSet<PharmacyOffer> PharmacyOffers { get; set; }
         public DbSet<PharmacyOfferComponent> PharmacyOfferComponents { get; set; }
         public DbSet<Notification> Notification { get; set; }
+        public DbSet<TenderMedication> TenderMedications { get; set; }
+        public DbSet<Tender> Tenders { get; set; }
+        
 
         public MyDbContext()
         {
@@ -34,7 +37,7 @@ namespace PharmacyClassLib
             String port = Environment.GetEnvironmentVariable("DB_PORT") ?? "5432";
             String databaseName = Environment.GetEnvironmentVariable("DB_NAME") ?? "Pharmacy";
             String username = Environment.GetEnvironmentVariable("DB_USER") ?? "postgres";
-            String password = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "root";
+            String password = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "admin";
 
             String connectionString = $"Server={server}; Port ={port}; Database ={databaseName}; User Id = {username}; Password ={password};";
             optionsBuilder.UseNpgsql(connectionString);
@@ -97,19 +100,32 @@ namespace PharmacyClassLib
                 );
 
             modelBuilder.Entity<PharmacyOffer>().HasData(
-                new PharmacyOffer(1, 1, 1, 15.5, false, "Bolnica1", new DateTime(2021, 5, 1, 8, 30, 52)),
-                new PharmacyOffer(2, 2, 2, 40.0, false, "Bolnica1", new DateTime(2021, 10, 12, 9, 28, 13))
+                new PharmacyOffer(1,new DateTime(2021, 5, 1, 8, 30, 52),new List<PharmacyOfferComponent>()),
+                new PharmacyOffer(2,new DateTime(2021, 10, 12, 9, 28, 13),new List<PharmacyOfferComponent>())
                 );
 
             modelBuilder.Entity<PharmacyOfferComponent>().HasData(
-                new PharmacyOfferComponent(1, 1, 1, 30),
-                new PharmacyOfferComponent(2, 1, 2, 18),
-                new PharmacyOfferComponent(3, 2, 3, 35),
-                new PharmacyOfferComponent(4, 2, 2, 31),
-                new PharmacyOfferComponent(5, 2, 1, 45)
+                new PharmacyOfferComponent { Id = 1, Price = 100, Quantity = 10, MedicationId = 1,PharmacyOfferId=1},
+                new PharmacyOfferComponent { Id = 2, Price = 1000, Quantity = 150, MedicationId = 2, PharmacyOfferId = 1 },
+                new PharmacyOfferComponent { Id = 3, Price = 2000, Quantity = 150, MedicationId = 3, PharmacyOfferId = 1 },
+                new PharmacyOfferComponent { Id = 4, Price = 1000, Quantity = 15, MedicationId = 2, PharmacyOfferId = 2 },
+                new PharmacyOfferComponent { Id = 5, Price = 2000, Quantity = 2, MedicationId = 3, PharmacyOfferId = 2 }
+                );
+
+            modelBuilder.Entity<Tender>().HasData(
+                new Tender { Id = 1, StartDate = new DateTime(2021, 5, 1, 8, 30, 52), EndDate = new DateTime(2021, 8, 1, 8, 30, 52), TenderDescription = "Tender za Bolnicu zdravo", TenderMedications = new List<TenderMedication>(), TenderStatus = TenderStatus.OPEN },
+                new Tender { Id = 2, StartDate = new DateTime(2021, 5, 1, 8, 30, 52), EndDate = new DateTime(2021, 8, 1, 8, 30, 52), TenderDescription = "Tender za neku drugu Bolnicu", TenderMedications = new List<TenderMedication>(), TenderStatus = TenderStatus.OPEN }
+                ) ;
+            modelBuilder.Entity<TenderMedication>().HasData(
+                new TenderMedication { Id = 1, MedicationName = "Paracetamol", Quantity = 10, TenderId = 1 },
+                new TenderMedication { Id = 2, MedicationName = "Vitamin C", Quantity = 10, TenderId = 1 },
+                new TenderMedication { Id = 3, MedicationName = "Longacef", Quantity = 100, TenderId = 2 },
+                new TenderMedication { Id = 4, MedicationName = "Zavoj", Quantity = 100, TenderId = 1 }
                 );
 
         }
+
+        
 
     }
 }

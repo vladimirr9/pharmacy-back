@@ -269,21 +269,6 @@ namespace PharmacyAPI.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("HospitalName")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsChosen")
-                        .HasColumnType("boolean");
-
-                    b.Property<long>("OfferIdentification")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("PharmacyId")
-                        .HasColumnType("bigint");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("double precision");
-
                     b.Property<DateTime>("TimePosted")
                         .HasColumnType("timestamp without time zone");
 
@@ -295,21 +280,11 @@ namespace PharmacyAPI.Migrations
                         new
                         {
                             Id = 1L,
-                            HospitalName = "Bolnica1",
-                            IsChosen = false,
-                            OfferIdentification = 1L,
-                            PharmacyId = 1L,
-                            Price = 15.5,
                             TimePosted = new DateTime(2021, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 2L,
-                            HospitalName = "Bolnica1",
-                            IsChosen = false,
-                            OfferIdentification = 2L,
-                            PharmacyId = 2L,
-                            Price = 40.0,
                             TimePosted = new DateTime(2021, 10, 12, 9, 28, 13, 0, DateTimeKind.Unspecified)
                         });
                 });
@@ -441,19 +416,21 @@ namespace PharmacyAPI.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<long>("MedicationID")
+                    b.Property<long>("MedicationId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("OfferID")
+                    b.Property<long>("PharmacyOfferId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("PharmacyOfferId")
-                        .HasColumnType("bigint");
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision");
 
                     b.Property<long>("Quantity")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MedicationId");
 
                     b.HasIndex("PharmacyOfferId");
 
@@ -463,37 +440,42 @@ namespace PharmacyAPI.Migrations
                         new
                         {
                             Id = 1L,
-                            MedicationID = 1L,
-                            OfferID = 1L,
-                            Quantity = 30L
+                            MedicationId = 1L,
+                            PharmacyOfferId = 1L,
+                            Price = 100.0,
+                            Quantity = 10L
                         },
                         new
                         {
                             Id = 2L,
-                            MedicationID = 2L,
-                            OfferID = 1L,
-                            Quantity = 18L
+                            MedicationId = 2L,
+                            PharmacyOfferId = 1L,
+                            Price = 1000.0,
+                            Quantity = 150L
                         },
                         new
                         {
                             Id = 3L,
-                            MedicationID = 3L,
-                            OfferID = 2L,
-                            Quantity = 35L
+                            MedicationId = 3L,
+                            PharmacyOfferId = 1L,
+                            Price = 2000.0,
+                            Quantity = 150L
                         },
                         new
                         {
                             Id = 4L,
-                            MedicationID = 2L,
-                            OfferID = 2L,
-                            Quantity = 31L
+                            MedicationId = 2L,
+                            PharmacyOfferId = 2L,
+                            Price = 1000.0,
+                            Quantity = 15L
                         },
                         new
                         {
                             Id = 5L,
-                            MedicationID = 1L,
-                            OfferID = 2L,
-                            Quantity = 45L
+                            MedicationId = 3L,
+                            PharmacyOfferId = 2L,
+                            Price = 2000.0,
+                            Quantity = 2L
                         });
                 });
 
@@ -527,6 +509,101 @@ namespace PharmacyAPI.Migrations
                         });
                 });
 
+            modelBuilder.Entity("PharmacyClassLib.Model.Tender", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("TenderDescription")
+                        .HasColumnType("text");
+
+                    b.Property<int>("TenderStatus")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tenders");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            EndDate = new DateTime(2021, 8, 1, 8, 30, 52, 0, DateTimeKind.Unspecified),
+                            StartDate = new DateTime(2021, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified),
+                            TenderDescription = "Tender za Bolnicu zdravo",
+                            TenderStatus = 0
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            EndDate = new DateTime(2021, 8, 1, 8, 30, 52, 0, DateTimeKind.Unspecified),
+                            StartDate = new DateTime(2021, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified),
+                            TenderDescription = "Tender za neku drugu Bolnicu",
+                            TenderStatus = 0
+                        });
+                });
+
+            modelBuilder.Entity("PharmacyClassLib.Model.TenderMedication", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("MedicationName")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("TenderId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenderId");
+
+                    b.ToTable("TenderMedications");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            MedicationName = "Paracetamol",
+                            Quantity = 10,
+                            TenderId = 1L
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            MedicationName = "Vitamin C",
+                            Quantity = 10,
+                            TenderId = 1L
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            MedicationName = "Longacef",
+                            Quantity = 100,
+                            TenderId = 2L
+                        },
+                        new
+                        {
+                            Id = 4L,
+                            MedicationName = "Zavoj",
+                            Quantity = 100,
+                            TenderId = 1L
+                        });
+                });
+
             modelBuilder.Entity("PharmacyClassLib.Model.MedicationIngredient", b =>
                 {
                     b.HasOne("PharmacyClassLib.Model.Medication", null)
@@ -536,9 +613,28 @@ namespace PharmacyAPI.Migrations
 
             modelBuilder.Entity("PharmacyClassLib.Model.Relations.PharmacyOfferComponent", b =>
                 {
+                    b.HasOne("PharmacyClassLib.Model.Medication", "Medication")
+                        .WithMany()
+                        .HasForeignKey("MedicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PharmacyClassLib.Model.PharmacyOffer", null)
                         .WithMany("Components")
-                        .HasForeignKey("PharmacyOfferId");
+                        .HasForeignKey("PharmacyOfferId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Medication");
+                });
+
+            modelBuilder.Entity("PharmacyClassLib.Model.TenderMedication", b =>
+                {
+                    b.HasOne("PharmacyClassLib.Model.Tender", null)
+                        .WithMany("TenderMedications")
+                        .HasForeignKey("TenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PharmacyClassLib.Model.Medication", b =>
@@ -549,6 +645,11 @@ namespace PharmacyAPI.Migrations
             modelBuilder.Entity("PharmacyClassLib.Model.PharmacyOffer", b =>
                 {
                     b.Navigation("Components");
+                });
+
+            modelBuilder.Entity("PharmacyClassLib.Model.Tender", b =>
+                {
+                    b.Navigation("TenderMedications");
                 });
 #pragma warning restore 612, 618
         }
