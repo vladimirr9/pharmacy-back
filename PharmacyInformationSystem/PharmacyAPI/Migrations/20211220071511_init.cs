@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace PharmacyAPI.Migrations
 {
-    public partial class tendering : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -125,11 +125,6 @@ namespace PharmacyAPI.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PharmacyId = table.Column<long>(type: "bigint", nullable: false),
-                    OfferIdentification = table.Column<long>(type: "bigint", nullable: false),
-                    Price = table.Column<double>(type: "double precision", nullable: false),
-                    IsChosen = table.Column<bool>(type: "boolean", nullable: false),
-                    HospitalName = table.Column<string>(type: "text", nullable: true),
                     TimePosted = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
@@ -166,6 +161,22 @@ namespace PharmacyAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Tenders",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    TenderStatus = table.Column<int>(type: "integer", nullable: false),
+                    TenderDescription = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tenders", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MedicationIngredients",
                 columns: table => new
                 {
@@ -191,20 +202,47 @@ namespace PharmacyAPI.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    OfferID = table.Column<long>(type: "bigint", nullable: false),
-                    MedicationID = table.Column<long>(type: "bigint", nullable: false),
+                    MedicationId = table.Column<long>(type: "bigint", nullable: false),
                     Quantity = table.Column<long>(type: "bigint", nullable: false),
-                    PharmacyOfferId = table.Column<long>(type: "bigint", nullable: true)
+                    Price = table.Column<double>(type: "double precision", nullable: false),
+                    PharmacyOfferId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PharmacyOfferComponents", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_PharmacyOfferComponents_Medications_MedicationId",
+                        column: x => x.MedicationId,
+                        principalTable: "Medications",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_PharmacyOfferComponents_PharmacyOffers_PharmacyOfferId",
                         column: x => x.PharmacyOfferId,
                         principalTable: "PharmacyOffers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TenderMedications",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    MedicationName = table.Column<string>(type: "text", nullable: true),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    TenderId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TenderMedications", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TenderMedications_Tenders_TenderId",
+                        column: x => x.TenderId,
+                        principalTable: "Tenders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
@@ -212,9 +250,9 @@ namespace PharmacyAPI.Migrations
                 columns: new[] { "Id", "IngredientID", "MedicationID" },
                 values: new object[,]
                 {
-                    { 1L, 1L, 1L },
                     { 3L, 2L, 1L },
-                    { 2L, 2L, 2L }
+                    { 2L, 2L, 2L },
+                    { 1L, 1L, 1L }
                 });
 
             migrationBuilder.InsertData(
@@ -222,11 +260,11 @@ namespace PharmacyAPI.Migrations
                 columns: new[] { "Id", "MedicationID", "PharmacyID", "Quantity" },
                 values: new object[,]
                 {
-                    { 5L, 1L, 3L, 14L },
-                    { 4L, 3L, 2L, 120L },
-                    { 3L, 1L, 2L, 20L },
                     { 2L, 2L, 1L, 85L },
-                    { 1L, 1L, 1L, 65L }
+                    { 3L, 1L, 2L, 20L },
+                    { 4L, 3L, 2L, 120L },
+                    { 1L, 1L, 1L, 65L },
+                    { 5L, 1L, 3L, 14L }
                 });
 
             migrationBuilder.InsertData(
@@ -264,30 +302,18 @@ namespace PharmacyAPI.Migrations
                 columns: new[] { "Id", "Adress", "AdressNumber", "City", "Name" },
                 values: new object[,]
                 {
+                    { 1L, "Rumenačka", "15", "Novi Sad", "Janković" },
                     { 3L, "Olge Jovanović", "18a", "Beograd", "Janković" },
-                    { 2L, "Bulevar oslobođenja", "135", "Novi Sad", "Janković" },
-                    { 1L, "Rumenačka", "15", "Novi Sad", "Janković" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "PharmacyOfferComponents",
-                columns: new[] { "Id", "MedicationID", "OfferID", "PharmacyOfferId", "Quantity" },
-                values: new object[,]
-                {
-                    { 5L, 1L, 2L, null, 45L },
-                    { 1L, 1L, 1L, null, 30L },
-                    { 2L, 2L, 1L, null, 18L },
-                    { 3L, 3L, 2L, null, 35L },
-                    { 4L, 2L, 2L, null, 31L }
+                    { 2L, "Bulevar oslobođenja", "135", "Novi Sad", "Janković" }
                 });
 
             migrationBuilder.InsertData(
                 table: "PharmacyOffers",
-                columns: new[] { "Id", "HospitalName", "IsChosen", "OfferIdentification", "PharmacyId", "Price", "TimePosted" },
+                columns: new[] { "Id", "TimePosted" },
                 values: new object[,]
                 {
-                    { 1L, "Bolnica1", false, 1L, 1L, 15.5, new DateTime(2021, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified) },
-                    { 2L, "Bolnica1", false, 2L, 2L, 40.0, new DateTime(2021, 10, 12, 9, 28, 13, 0, DateTimeKind.Unspecified) }
+                    { 2L, new DateTime(2021, 10, 12, 9, 28, 13, 0, DateTimeKind.Unspecified) },
+                    { 1L, new DateTime(2021, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -300,15 +326,57 @@ namespace PharmacyAPI.Migrations
                 columns: new[] { "Id", "HospitalName", "ObjectionIdFromHospitalDatabase", "TextResponse" },
                 values: new object[] { 1L, "Bolnica1", 0L, "Kleveta" });
 
+            migrationBuilder.InsertData(
+                table: "Tenders",
+                columns: new[] { "Id", "EndDate", "StartDate", "TenderDescription", "TenderStatus" },
+                values: new object[,]
+                {
+                    { 1L, new DateTime(2021, 8, 1, 8, 30, 52, 0, DateTimeKind.Unspecified), new DateTime(2021, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified), "Tender za Bolnicu zdravo", 0 },
+                    { 2L, new DateTime(2021, 8, 1, 8, 30, 52, 0, DateTimeKind.Unspecified), new DateTime(2021, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified), "Tender za neku drugu Bolnicu", 0 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "PharmacyOfferComponents",
+                columns: new[] { "Id", "MedicationId", "PharmacyOfferId", "Price", "Quantity" },
+                values: new object[,]
+                {
+                    { 1L, 1L, 1L, 100.0, 10L },
+                    { 2L, 2L, 1L, 1000.0, 150L },
+                    { 3L, 3L, 1L, 2000.0, 150L },
+                    { 4L, 2L, 2L, 1000.0, 15L },
+                    { 5L, 3L, 2L, 2000.0, 2L }
+                });
+
+            migrationBuilder.InsertData(
+                table: "TenderMedications",
+                columns: new[] { "Id", "MedicationName", "Quantity", "TenderId" },
+                values: new object[,]
+                {
+                    { 1L, "Paracetamol", 10, 1L },
+                    { 2L, "Vitamin C", 10, 1L },
+                    { 4L, "Zavoj", 100, 1L },
+                    { 3L, "Longacef", 100, 2L }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_MedicationIngredients_MedicationId",
                 table: "MedicationIngredients",
                 column: "MedicationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PharmacyOfferComponents_MedicationId",
+                table: "PharmacyOfferComponents",
+                column: "MedicationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PharmacyOfferComponents_PharmacyOfferId",
                 table: "PharmacyOfferComponents",
                 column: "PharmacyOfferId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TenderMedications_TenderId",
+                table: "TenderMedications",
+                column: "TenderId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -344,10 +412,16 @@ namespace PharmacyAPI.Migrations
                 name: "Responses");
 
             migrationBuilder.DropTable(
+                name: "TenderMedications");
+
+            migrationBuilder.DropTable(
                 name: "Medications");
 
             migrationBuilder.DropTable(
                 name: "PharmacyOffers");
+
+            migrationBuilder.DropTable(
+                name: "Tenders");
         }
     }
 }
