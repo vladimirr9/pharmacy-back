@@ -24,8 +24,8 @@ namespace PharmacyAPI.Controllers
             this.pharmacyService = pharmacyService;
         }
 
-        //[HttpGet]
-        /*public List<PharmacyOfferViewDTO> GetAll()
+        [HttpGet]
+        public List<PharmacyOfferViewDTO> GetAll()
         {
             List<PharmacyOfferViewDTO> retval = new List<PharmacyOfferViewDTO>();
             foreach (PharmacyOffer offer in pharmacyOfferService.GetAll())
@@ -91,7 +91,7 @@ namespace PharmacyAPI.Controllers
             }
 
             return null;
-        } */
+        }
 
     }
 }

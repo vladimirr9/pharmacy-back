@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PharmacyClassLib;
@@ -9,9 +10,15 @@ using PharmacyClassLib;
 namespace PharmacyAPI.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+<<<<<<< HEAD:PharmacyInformationSystem/PharmacyAPI/Migrations/20211207105202_tendering.Designer.cs
+    [Migration("20211207105202_tendering")]
+    partial class tendering
+=======
+    [Migration("20211206182636_first")]
+    partial class first
+>>>>>>> 4d701e8 (feat: create model notification and send current pdf path):PharmacyInformationSystem/PharmacyAPI/Migrations/20211206182636_first.Designer.cs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
