@@ -2,6 +2,7 @@
 using PharmacyClassLib.Model;
 using PharmacyClassLib.Model.Enums;
 using PharmacyClassLib.Model.Relations;
+using PharmacyClassLib.ModelConfiguration;
 using System;
 using System.Collections.Generic;
 
@@ -45,6 +46,9 @@ namespace PharmacyClassLib
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new NewsConfiguration());
+
+
             modelBuilder.Entity<Pharmacy>().HasData(
                 new Pharmacy(1, "Janković", "Novi Sad", "Rumenačka", "15"),
                 new Pharmacy(2, "Janković", "Novi Sad", "Bulevar oslobođenja", "135"),
