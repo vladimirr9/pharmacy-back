@@ -64,8 +64,8 @@ namespace PharmacyAPI.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Title = table.Column<string>(type: "text", nullable: true),
                     Text = table.Column<string>(type: "text", nullable: true),
-                    DurationStart = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    DurationEnd = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    DateRange_Start = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    DateRange_End = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {

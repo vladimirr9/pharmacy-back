@@ -131,12 +131,6 @@ namespace PharmacyAPI.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<DateTime>("DurationEnd")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime>("DurationStart")
-                        .HasColumnType("timestamp without time zone");
-
                     b.Property<string>("Text")
                         .HasColumnType("text");
 
@@ -627,6 +621,32 @@ namespace PharmacyAPI.Migrations
                     b.HasOne("PharmacyClassLib.Model.Medication", null)
                         .WithMany("MedicationIngredients")
                         .HasForeignKey("MedicationId");
+                });
+
+            modelBuilder.Entity("PharmacyClassLib.Model.News", b =>
+                {
+                    b.OwnsOne("PharmacyClassLib.Model.DateRange", "DateRange", b1 =>
+                        {
+                            b1.Property<long>("NewsId")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("bigint")
+                                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                            b1.Property<DateTime>("End")
+                                .HasColumnType("timestamp without time zone");
+
+                            b1.Property<DateTime>("Start")
+                                .HasColumnType("timestamp without time zone");
+
+                            b1.HasKey("NewsId");
+
+                            b1.ToTable("News");
+
+                            b1.WithOwner()
+                                .HasForeignKey("NewsId");
+                        });
+
+                    b.Navigation("DateRange");
                 });
 
             modelBuilder.Entity("PharmacyClassLib.Model.Relations.PharmacyOfferComponent", b =>
