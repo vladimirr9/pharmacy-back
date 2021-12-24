@@ -10,8 +10,8 @@ using PharmacyClassLib;
 namespace PharmacyAPI.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20211222102300_first-tendering")]
-    partial class firsttendering
+    [Migration("20211223205200_first")]
+    partial class first
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -271,6 +271,15 @@ namespace PharmacyAPI.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<string>("HospitalName")
+                        .HasColumnType("text");
+
+                    b.Property<long>("PharmacyId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TenderId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime>("TimePosted")
                         .HasColumnType("timestamp without time zone");
 
@@ -282,11 +291,17 @@ namespace PharmacyAPI.Migrations
                         new
                         {
                             Id = 1L,
+                            HospitalName = "Bolnica1",
+                            PharmacyId = 0L,
+                            TenderId = 0L,
                             TimePosted = new DateTime(2021, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 2L,
+                            HospitalName = "Bolnica1",
+                            PharmacyId = 0L,
+                            TenderId = 0L,
                             TimePosted = new DateTime(2021, 10, 12, 9, 28, 13, 0, DateTimeKind.Unspecified)
                         });
                 });
@@ -524,6 +539,9 @@ namespace PharmacyAPI.Migrations
                     b.Property<string>("HospitalName")
                         .HasColumnType("text");
 
+                    b.Property<long>("IdInHospital")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
@@ -539,6 +557,7 @@ namespace PharmacyAPI.Migrations
                         {
                             Id = 1L,
                             EndDate = new DateTime(2021, 8, 1, 8, 30, 52, 0, DateTimeKind.Unspecified),
+                            IdInHospital = 0L,
                             Name = "Tender za Bolnicu zdravo",
                             StartDate = new DateTime(2021, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified)
                         },
@@ -546,6 +565,7 @@ namespace PharmacyAPI.Migrations
                         {
                             Id = 2L,
                             EndDate = new DateTime(2021, 8, 1, 8, 30, 52, 0, DateTimeKind.Unspecified),
+                            IdInHospital = 0L,
                             Name = "Tender za neku drugu Bolnicu",
                             StartDate = new DateTime(2021, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified)
                         });

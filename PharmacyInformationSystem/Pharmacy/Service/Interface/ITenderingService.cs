@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 
 namespace PharmacyClassLib.Service.Interface
 {
-    interface ITenderingService
+    public interface ITenderingService
     {
         Tender Create(Tender tender);
         bool Remove(Tender tender);
         Tender Update(Tender tender);
         Tender Get(long id);
         List<Tender> GetAll();
+
+        List<Tender> GetAllWithMedication();
 
     }
 }

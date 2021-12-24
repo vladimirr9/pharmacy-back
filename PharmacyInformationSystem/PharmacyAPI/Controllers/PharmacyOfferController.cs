@@ -2,6 +2,7 @@
 using PharmacyAPI.Dto;
 using PharmacyAPI.Mapper;
 using PharmacyClassLib.Model;
+using PharmacyClassLib.Model.Relations;
 using PharmacyClassLib.Service;
 using PharmacyClassLib.Service.Interface;
 using System;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 namespace PharmacyAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class PharmacyOfferController
     {
         private readonly IPharmacyOfferService pharmacyOfferService;
@@ -22,6 +23,16 @@ namespace PharmacyAPI.Controllers
         {
             this.pharmacyOfferService = pharmacyOfferService;
             this.pharmacyService = pharmacyService;
+        }
+
+        [HttpPost]
+        public PharmacyOffer Create(PharmacyOfferDTO dto)
+        {
+            PharmacyOffer offer = PharmacyOfferMapper.PharmacyDTOToOffer(dto);
+            List<PharmacyOfferComponent> components = new List<PharmacyOfferComponent>();
+            dto.Components.ForEach(c => components.Add(OfferComponentMapper.OfferComponentDtoToOfferComponent(c)));
+            offer.Components = components;
+            return pharmacyOfferService.Create(offer);
         }
 
         //[HttpGet]
@@ -58,11 +69,7 @@ namespace PharmacyAPI.Controllers
             return retval;
         }
 
-        [HttpPost]
-        public PharmacyOffer Create([FromBody] PharmacyOfferDTO dto)
-        {
-            return pharmacyOfferService.Create(PharmacyOfferMapper.PharmacyDTOToOffer(dto));
-        }
+        
 
         [HttpDelete("{id?}")]
         public void Delete(long id)

@@ -17,6 +17,7 @@ using PharmacyClassLib.Repository.IngredientMedicationRepository;
 using PharmacyClassLib.Repository.ResponseRepository;
 using PharmacyClassLib.Repository.InventoryLogRepository;
 using PharmacyClassLib.Repository.NewsRepository;
+using PharmacyClassLib.Repository.TenderingRepository;
 using PharmacyClassLib.Service.Interface;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -68,6 +69,7 @@ namespace WebApplication1
             services.AddTransient<IPharmacyOfferRepository, PharmacyOfferRepository>();
             services.AddTransient<IPharmacyOfferComponentRepository, PharmacyOfferComponentRepository>();
             services.AddTransient<INotificationRepository, NotificationRepository>();
+            services.AddTransient<ITenderingRepository, TenderingRepository>();
 
             services.AddScoped<IIngredientInMedicationService, IngredientInMedicationService>();
             services.AddScoped<IMedicationService, MedicationService>();
@@ -84,6 +86,7 @@ namespace WebApplication1
             services.AddScoped<IChannelsForCommunication, RabbitMQChannelsForCommunication>();
             services.AddScoped<MedicationConsumptionService>();
             services.AddScoped<TenderCommunicationRabbitMQ>();
+            services.AddScoped<ITenderingService, TenderingService>();
 
             services.AddHostedService<CompressionOfOldFiles>();
         }

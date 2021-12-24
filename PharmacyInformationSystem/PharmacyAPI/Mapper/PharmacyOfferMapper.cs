@@ -10,12 +10,11 @@ namespace PharmacyAPI.Mapper
 {
     public class PharmacyOfferMapper
     {
-        /*public static PharmacyOffer PharmacyDTOToOffer(PharmacyOfferDTO dto)
+        public static PharmacyOffer PharmacyDTOToOffer(PharmacyOfferDTO dto)
         {
-            PharmacyOffer offer = new PharmacyOffer(dto.Id, dto.PharmacyId, dto.OfferIdentification, dto.Price, dto.IsChosen, dto.HospitalName, DateTime.Now);
-            offer.Components = dto.Components;
+            PharmacyOffer offer = new PharmacyOffer { Id = dto.Id, PharmacyId= dto.PharmacyId, TenderId = dto.TenderId, TimePosted= DateTime.Now };
             return offer; 
-        }*/
+        }
 
     }
 }

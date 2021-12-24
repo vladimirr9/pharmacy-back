@@ -1,4 +1,5 @@
-﻿using PharmacyClassLib.Model;
+﻿using Microsoft.EntityFrameworkCore;
+using PharmacyClassLib.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,12 @@ namespace PharmacyClassLib.Repository.TenderingRepository
         {
 
         }
+
+        public List<Tender> GetAllWithMedications()
+        {
+            return this.context.Tenders.Include(tender => tender.TenderMedications).ToList();
+        }
+
         protected override long GetId(Tender entity)
         {
             return entity.Id;

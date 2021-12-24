@@ -12,7 +12,7 @@ using PharmacyAPI.Dto;
 namespace PharmacyAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class PharmacyController : ControllerBase
     {
         private readonly IPharmacyService pharmacyService;
