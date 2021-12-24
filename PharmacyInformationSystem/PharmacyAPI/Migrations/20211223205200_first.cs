@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace PharmacyAPI.Migrations
 {
-    public partial class firsttendering : Migration
+    public partial class first : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -125,6 +125,9 @@ namespace PharmacyAPI.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PharmacyId = table.Column<long>(type: "bigint", nullable: false),
+                    TenderId = table.Column<long>(type: "bigint", nullable: false),
+                    HospitalName = table.Column<string>(type: "text", nullable: true),
                     TimePosted = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
@@ -168,6 +171,7 @@ namespace PharmacyAPI.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: true),
                     HospitalName = table.Column<string>(type: "text", nullable: true),
+                    IdInHospital = table.Column<long>(type: "bigint", nullable: false),
                     StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
@@ -309,11 +313,11 @@ namespace PharmacyAPI.Migrations
 
             migrationBuilder.InsertData(
                 table: "PharmacyOffers",
-                columns: new[] { "Id", "TimePosted" },
+                columns: new[] { "Id", "HospitalName", "PharmacyId", "TenderId", "TimePosted" },
                 values: new object[,]
                 {
-                    { 2L, new DateTime(2021, 10, 12, 9, 28, 13, 0, DateTimeKind.Unspecified) },
-                    { 1L, new DateTime(2021, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified) }
+                    { 2L, "Bolnica1", 0L, 0L, new DateTime(2021, 10, 12, 9, 28, 13, 0, DateTimeKind.Unspecified) },
+                    { 1L, "Bolnica1", 0L, 0L, new DateTime(2021, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -328,11 +332,11 @@ namespace PharmacyAPI.Migrations
 
             migrationBuilder.InsertData(
                 table: "Tenders",
-                columns: new[] { "Id", "EndDate", "HospitalName", "Name", "StartDate" },
+                columns: new[] { "Id", "EndDate", "HospitalName", "IdInHospital", "Name", "StartDate" },
                 values: new object[,]
                 {
-                    { 1L, new DateTime(2021, 8, 1, 8, 30, 52, 0, DateTimeKind.Unspecified), null, "Tender za Bolnicu zdravo", new DateTime(2021, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified) },
-                    { 2L, new DateTime(2021, 8, 1, 8, 30, 52, 0, DateTimeKind.Unspecified), null, "Tender za neku drugu Bolnicu", new DateTime(2021, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified) }
+                    { 1L, new DateTime(2021, 8, 1, 8, 30, 52, 0, DateTimeKind.Unspecified), null, 0L, "Tender za Bolnicu zdravo", new DateTime(2021, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified) },
+                    { 2L, new DateTime(2021, 8, 1, 8, 30, 52, 0, DateTimeKind.Unspecified), null, 0L, "Tender za neku drugu Bolnicu", new DateTime(2021, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(

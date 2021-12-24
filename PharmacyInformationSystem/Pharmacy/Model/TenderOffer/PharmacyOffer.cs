@@ -13,6 +13,9 @@ namespace PharmacyClassLib.Model
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
+        public long PharmacyId { get; set; }
+        public long TenderId { get; set; }
+        public string HospitalName { get; set; } = "Bolnica1";
         public DateTime TimePosted { get; set; }
         public virtual IEnumerable<PharmacyOfferComponent> Components { get; set; }
 

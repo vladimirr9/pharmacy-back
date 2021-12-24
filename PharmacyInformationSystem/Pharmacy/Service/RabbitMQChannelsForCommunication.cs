@@ -45,6 +45,8 @@ namespace PharmacyClassLib.Service
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
+                channel.ExchangeDeclare(exchange: "newsExchange", type: ExchangeType.Fanout);
+
                 channel.QueueDeclare(queue: hospital.Name,
                     durable: true,
                     exclusive: false,

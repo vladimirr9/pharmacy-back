@@ -9,6 +9,7 @@ namespace PharmacyClassLib.Repository.TenderingRepository
 {
     public interface ITenderingRepository:IGenericRepository<Tender, long>
     {
+        List<Tender> GetAllWithMedications();
 
     }
 }

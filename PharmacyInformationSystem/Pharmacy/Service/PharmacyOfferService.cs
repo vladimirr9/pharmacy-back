@@ -19,6 +19,10 @@ namespace PharmacyClassLib.Service
             this.pharmacyOfferRepository = pharmacyOfferRepository;
         }
 
+        public PharmacyOffer Create(PharmacyOffer offer) {
+            return this.pharmacyOfferRepository.Create(offer);
+        }
+
         public PharmacyOffer CreateOffer(List<PharmacyOfferComponent> pharmacyOfferComponents)
         {
             pharmacyOfferComponents.ForEach(component => component.Medication = medicationRepository.Get(component.Id));
