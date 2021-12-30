@@ -42,7 +42,6 @@ namespace PharmacyClassLib
 
 
             String connectionString = $"Server={server}; Port ={port}; Database ={databaseName}; User Id = {username}; Password ={password};";
-            Console.WriteLine(connectionString);
             optionsBuilder.UseNpgsql(connectionString);
         }
 
