@@ -1,108 +1,42 @@
-version: '3.4'
-
+version: "3.4"
 services:
-  pharmacy:
-    image: psw8org/pharmacy-back:latest
-    networks:
-      - pharmacy_database_net
-    container_name: Pharmacy_Back
-    environment:
-       SERVER: "database-pharmacy"
-       DB_PORT: "5432"
-       DB_NAME: "Pharmacy"
-       DB_USER: "postgres"
-       DB_PASSWORD: "root"
-    expose:
-      - "80"
-    ports:
-      - "5101:80"
-    restart: on-failure
-    #extra hosts can be used for standalone SQL Server or services at the dev PC
-    depends_on:
-      - database-pharmacy
-
-  patients-portal:
-    image: psw8org/patients-portal-back:latest
-    networks:
-      - patients_database_net
-    container_name: Patients_Portal_Back
-    environment:
-       SERVER: "database-patients"
-       DB_PORT: "5432"
-       DB_NAME: "psw_database"
-       DB_USER: "postgres"
-       DB_PASSWORD: "wasd"
-    expose:
-      - "80"
-    ports:
-      - "5111:80"
-    restart: on-failure
-    #extra hosts can be used for standalone SQL Server or services at the dev PC
-    depends_on:
-      - database-patients
-
-  integrations:
-    image: psw8org/integration-app:latest
-    networks:
-      - integrations_database_net
-    container_name: Integrations_Back
-    environment:
-       SERVER: "database-integration"
-       DB_PORT: "5432"
-       DB_NAME: "Integration"
-       DB_USER: "postgres"
-       DB_PASSWORD: "root"
-    expose:
-      - "80"
-    ports:
-      - "5112:80"
-    restart: on-failure
-    #extra hosts can be used for standalone SQL Server or services at the dev PC
-    depends_on:
-      - database-integration
-
-  
-  database-patients:
-    image: postgres:13
-    restart: always
-    container_name: Patients_Portal_Database
-    networks:
-      - patients_database_net
-    environment:
-      POSTGRES_PASSWORD: "wasd"
-      POSTGRES_USER: "postgres"
-    ports:
-      - "8080:5432"
   database-pharmacy:
     image: postgres:13
     restart: always
-    container_name: Pharmacy_Database
+    container_name: database-pharmacy
     networks:
       - pharmacy_database_net
     environment:
       POSTGRES_PASSWORD: "root"
       POSTGRES_USER: "postgres"
     ports:
-      - "8081:5432"
-  database-integration:
-    image: postgres:13
-    restart: always
-    container_name: Integrations_Database
-    networks:
-      - integrations_database_net
-    environment:
-      POSTGRES_PASSWORD: "root"
-      POSTGRES_USER: "postgres"
-    ports:
-      - "8082:5432"
-
+      - "7001:5432"
+  integration-tests:
+      container_name: integration-tests
+      environment:
+        DB_USER: "postgres"
+        DB_PASSWORD: "root"
+        DB_PORT: "5432"
+        DB_NAME: "Pharmacy"
+        SERVER: "database-pharmacy"
+      networks:
+      - pharmacy_database_net
+      image: mcr.microsoft.com/dotnet/sdk:5.0
+      working_dir: /PharmacyInformationSystem
+      volumes:
+      - .:/PharmacyInformationSystem
+      command: bash -c "
+        dotnet new tool-manifest --force && 
+        dotnet tool install --local dotnet-ef --version 5.0.11 &&
+        apt-get update && apt-get -y install libxml2 libgdiplus libc6-dev &&
+        dotnet restore PharmacyInformationSystem &&
+        dotnet dotnet-ef migrations add TestingMigration1 --project PharmacyInformationSystem/Pharmacy &&
+        dotnet dotnet-ef database update --project PharmacyInformationSystem/Pharmacy &&
+        dotnet test PharmacyInformationSystem
+        "
+      depends_on:
+        - database-pharmacy
 networks:
   pharmacy_database_net:
     name: pharmacy_database_net
-    driver: bridge
-  patients_database_net:
-    name: patients_database_net
-    driver: bridge
-  integrations_database_net:
-    name: integrations_database_net
     driver: bridge
