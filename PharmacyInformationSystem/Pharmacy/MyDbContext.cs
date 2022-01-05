@@ -40,6 +40,7 @@ namespace PharmacyClassLib
             String username = Environment.GetEnvironmentVariable("DB_USER") ?? "postgres";
             String password = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "root";
 
+
             String connectionString = $"Server={server}; Port ={port}; Database ={databaseName}; User Id = {username}; Password ={password};";
             optionsBuilder.UseNpgsql(connectionString);
         }
