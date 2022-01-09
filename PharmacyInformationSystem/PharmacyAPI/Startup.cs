@@ -29,6 +29,7 @@ using PharmacyAPI.Controllers;
 using PharmacyAPI.Filters;
 using PharmacyClassLib.Repository.PharmacyOfferRepository;
 using PharmacyClassLib.Repository.NotificationRepository;
+using PharmacyClassLib.ModelConfiguration;
 
 namespace WebApplication1
 {
@@ -104,6 +105,7 @@ namespace WebApplication1
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<MyDbContext>();
+                
                 try
                 {
                     Console.WriteLine("###############################################################################");
@@ -118,7 +120,21 @@ namespace WebApplication1
                     Console.WriteLine(e.Data);
                     Console.WriteLine("###############################################################################");
                 }
-                
+
+                try
+                {
+                    PharmacySeeder seeder = new PharmacySeeder(context);
+
+                    seeder.SeedData();
+
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Failed to seed data");
+                }
+
+
+
             }
             app.UseRouting();
 
