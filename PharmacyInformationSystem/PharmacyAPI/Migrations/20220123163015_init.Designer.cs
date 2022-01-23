@@ -10,8 +10,8 @@ using PharmacyClassLib;
 namespace PharmacyAPI.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20220111174629_emailing")]
-    partial class emailing
+    [Migration("20220123163015_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -596,20 +596,20 @@ namespace PharmacyAPI.Migrations
                         new
                         {
                             Id = 1L,
-                            EndDate = new DateTime(2022, 3, 2, 18, 46, 27, 288, DateTimeKind.Local).AddTicks(9210),
+                            EndDate = new DateTime(2022, 3, 14, 17, 30, 14, 953, DateTimeKind.Local).AddTicks(7797),
                             HospitalName = "Bolnica1",
                             IdInHospital = 0L,
                             Name = "Tender za Bolnicu zdravo",
-                            StartDate = new DateTime(2022, 1, 11, 18, 46, 27, 279, DateTimeKind.Local).AddTicks(7852)
+                            StartDate = new DateTime(2022, 1, 23, 17, 30, 14, 950, DateTimeKind.Local).AddTicks(4642)
                         },
                         new
                         {
                             Id = 2L,
-                            EndDate = new DateTime(2022, 2, 10, 18, 46, 27, 289, DateTimeKind.Local).AddTicks(5822),
+                            EndDate = new DateTime(2022, 2, 22, 17, 30, 14, 953, DateTimeKind.Local).AddTicks(9960),
                             HospitalName = "Bolnica1",
                             IdInHospital = 0L,
                             Name = "Tender za neku drugu Bolnicu",
-                            StartDate = new DateTime(2022, 1, 11, 18, 46, 27, 289, DateTimeKind.Local).AddTicks(5733)
+                            StartDate = new DateTime(2022, 1, 23, 17, 30, 14, 953, DateTimeKind.Local).AddTicks(9944)
                         });
                 });
 
@@ -690,7 +690,7 @@ namespace PharmacyAPI.Migrations
                                 .HasColumnType("bigint")
                                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                            b1.Property<DateTime>("End")
+                            b1.Property<DateTime?>("End")
                                 .HasColumnType("timestamp without time zone");
 
                             b1.Property<DateTime>("Start")
@@ -723,7 +723,7 @@ namespace PharmacyAPI.Migrations
                                 .HasColumnType("bigint")
                                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                            b1.Property<DateTime>("End")
+                            b1.Property<DateTime?>("End")
                                 .HasColumnType("timestamp without time zone");
 
                             b1.Property<DateTime>("Start")

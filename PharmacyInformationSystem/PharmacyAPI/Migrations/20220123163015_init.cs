@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace PharmacyAPI.Migrations
 {
-    public partial class emailing : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -373,8 +373,8 @@ namespace PharmacyAPI.Migrations
                 columns: new[] { "Id", "EndDate", "HospitalName", "IdInHospital", "Name", "StartDate" },
                 values: new object[,]
                 {
-                    { 1L, new DateTime(2022, 3, 2, 18, 46, 27, 288, DateTimeKind.Local).AddTicks(9210), "Bolnica1", 0L, "Tender za Bolnicu zdravo", new DateTime(2022, 1, 11, 18, 46, 27, 279, DateTimeKind.Local).AddTicks(7852) },
-                    { 2L, new DateTime(2022, 2, 10, 18, 46, 27, 289, DateTimeKind.Local).AddTicks(5822), "Bolnica1", 0L, "Tender za neku drugu Bolnicu", new DateTime(2022, 1, 11, 18, 46, 27, 289, DateTimeKind.Local).AddTicks(5733) }
+                    { 1L, new DateTime(2022, 3, 14, 17, 30, 14, 953, DateTimeKind.Local).AddTicks(7797), "Bolnica1", 0L, "Tender za Bolnicu zdravo", new DateTime(2022, 1, 23, 17, 30, 14, 950, DateTimeKind.Local).AddTicks(4642) },
+                    { 2L, new DateTime(2022, 2, 22, 17, 30, 14, 953, DateTimeKind.Local).AddTicks(9960), "Bolnica1", 0L, "Tender za neku drugu Bolnicu", new DateTime(2022, 1, 23, 17, 30, 14, 953, DateTimeKind.Local).AddTicks(9944) }
                 });
 
             migrationBuilder.InsertData(

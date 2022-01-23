@@ -1,0 +1,20 @@
+name: deploy system
+on:
+  push:
+    tags:
+      - 'deploy*' 
+
+jobs:
+  build:
+    name: Deploy psw8org system to server
+    runs-on: ubuntu-latest
+    steps:
+    - name: Activate deploy.sh script
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        port: ${{ secrets.SSH_PORT }}
+        username: ${{ secrets.SSH_USER }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        key: ${{ secrets.SSH_KEY }}
+        script: sh deploy.sh
