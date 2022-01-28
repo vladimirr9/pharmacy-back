@@ -1,0 +1,165 @@
+version: '3.4'
+services:
+  fronts:
+      sysctls:
+        - net.ipv4.ip_unprivileged_port_start=1024
+      build:
+        context: .
+        
+        dockerfile: Dockerfile_fronts
+        target: gatewayWithFront
+      restart: on-failure
+      networks:
+        - pharmacy-application_net
+        - patients-application_net
+        - integrations-application_net
+      ports:
+        - "8080:8080"
+      depends_on:
+        - pharmacy
+        - patients-portal
+        - integration
+
+  pharmacy:
+    sysctls:
+      - net.ipv4.ip_unprivileged_port_start=1024
+    image: psw8org/pharmacy-back:latest
+    networks:
+      - pharmacy_database_net
+      - pharmacy-application_net
+    container_name: Pharmacy_Back
+    environment:
+       RabbitHostName: "rabbitmq"
+       SERVER: "database-pharmacy"
+       DB_PORT: "5432"
+       DB_NAME: "Pharmacy"
+       DB_USER: "postgres"
+       DB_PASSWORD: "root"
+    expose:
+      - "8080"
+    ports:
+      - "5110:8080"
+    restart: on-failure
+    #extra hosts can be used for standalone SQL Server or services at the dev PC
+    depends_on:
+      - database-pharmacy
+
+  patients-portal:
+    sysctls:
+      - net.ipv4.ip_unprivileged_port_start=1024
+    image: psw8org/patients-portal-back:latest
+    networks:
+      - patients_database_net
+      - patients-application_net
+    container_name: Patients_Portal_Back
+    environment:
+       SERVER: "database-patients"
+       DB_PORT: "5432"
+       DB_NAME: "psw_database"
+       DB_USER: "postgres"
+       DB_PASSWORD: "wasd"
+    expose:
+      - "8080"
+    ports:
+      - "5111:8080"
+    restart: on-failure
+    #extra hosts can be used for standalone SQL Server or services at the dev PC
+    depends_on:
+      - database-patients
+  
+  rabbitmq:
+        image: rabbitmq:3-management-alpine
+        container_name: rabbitmq
+        hostname: "rabbitmq"
+        labels:
+          NAME: "rabbitmq"
+        networks:
+        - pharmacy-application_net
+        - integrations-application_net
+        environment:
+            RABBITMQ_DEFAULT_USER: "guest"
+            RABBITMQ_DEFAULT_PASS: "guest"
+        ports:
+            - 5672:5672
+            - 15672:15672
+  
+  integration:
+    sysctls:
+      - net.ipv4.ip_unprivileged_port_start=1024
+    image: psw8org/integration-app:latest
+    networks:
+      - integrations_database_net
+      - integrations-application_net
+    container_name: Integrations_Back
+    environment:
+       RabbitHostName: "rabbitmq"
+       SERVER: "database-integration"
+       DB_PORT: "5432"
+       DB_NAME: "Integration"
+       DB_USER: "postgres"
+       DB_PASSWORD: "root"
+    expose:
+      - "8080"
+    ports:
+      - "5112:8080"
+    restart: on-failure
+    #extra hosts can be used for standalone SQL Server or services at the dev PC
+    depends_on:
+      - database-integration
+
+  
+  database-patients:
+    image: postgres:13
+    restart: always
+    container_name: Patients_Portal_Database
+    networks:
+      - patients_database_net
+    environment:
+      POSTGRES_PASSWORD: "wasd"
+      POSTGRES_USER: "postgres"
+    ports:
+      - "7083:5432"
+
+  database-pharmacy:
+    image: postgres:13
+    restart: always
+    container_name: Pharmacy_Database
+    networks:
+      - pharmacy_database_net
+    environment:
+      POSTGRES_PASSWORD: "root"
+      POSTGRES_USER: "postgres"
+    ports:
+      - "7081:5432"
+
+  database-integration:
+    image: postgres:13
+    restart: always
+    container_name: Integrations_Database
+    networks:
+      - integrations_database_net
+    environment:
+      POSTGRES_PASSWORD: "root"
+      POSTGRES_USER: "postgres"
+    ports:
+      - "7082:5432"
+
+networks:
+  pharmacy_database_net:
+    name: pharmacy_database_net
+    driver: bridge
+  patients_database_net:
+    name: patients_database_net
+    driver: bridge
+  integrations_database_net:
+    name: integrations_database_net
+    driver: bridge
+  pharmacy-application_net:
+    name: pharmacy-application_net
+    driver: bridge
+  patients-application_net:
+    name: patients-application_net
+    driver: bridge
+  integrations-application_net:
+    name: integrations-application_net
+    driver: bridge
